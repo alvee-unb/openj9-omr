@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2020 IBM Corp. and others
+ * Copyright (c) 2018, 2021 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -477,6 +477,8 @@
 		fmaxd,                                                  	/* 0x1E604800	FMAX      	 */
 		fmins,                                                  	/* 0x1E205800	FMIN      	 */
 		fmind,                                                  	/* 0x1E605800	FMIN      	 */
+	/* Vector Move (2 source) */
+		vmov,                                                  		/* 0x4EA01C00   MOV          */
 /* Hint instructions */
 		nop,                                                    	/* 0xD503201F   NOP          */
 /* Internal OpCodes */

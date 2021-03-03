@@ -391,6 +391,10 @@ TR::Register *commonLoadEvaluator(TR::Node *node, TR::InstOpCode::Mnemonic op, T
       {
       tempReg = cg->allocateRegister(TR_FPR);
       }
+   else if (op == TR::InstOpCode::vldrimmq)
+      {
+      tempReg = cg->allocateRegister(TR_VRF);
+      }
    else
       {
       tempReg = cg->allocateRegister();
