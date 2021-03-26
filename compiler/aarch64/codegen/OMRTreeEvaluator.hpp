@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2020 IBM Corp. and others
+ * Copyright (c) 2018, 2021 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -756,6 +756,7 @@ public:
 	static TR::Register *sbitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 	static TR::Register *ibitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 	static TR::Register *lbitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
+	static TR::Register *inlineVectorBinaryOp(TR::Node * node, TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op);
 	static TR::Register *PrefetchEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 
 	static TR::Register *performCall(TR::Node *node, bool isIndirect, TR::CodeGenerator *cg);
