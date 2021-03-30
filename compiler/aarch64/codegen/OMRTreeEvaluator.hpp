@@ -756,7 +756,6 @@ public:
 	static TR::Register *sbitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 	static TR::Register *ibitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 	static TR::Register *lbitpermuteEvaluator(TR::Node *node, TR::CodeGenerator *cg);
-	static TR::Register *inlineVectorBinaryOp(TR::Node * node, TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op);
 	static TR::Register *PrefetchEvaluator(TR::Node *node, TR::CodeGenerator *cg);
 
 	static TR::Register *performCall(TR::Node *node, bool isIndirect, TR::CodeGenerator *cg);
