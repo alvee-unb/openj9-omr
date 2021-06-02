@@ -571,6 +571,138 @@ OMR::ARM64::TreeEvaluator::acmpeqEvaluator(TR::Node *node, TR::CodeGenerator *cg
 	return OMR::ARM64::TreeEvaluator::unImpOpEvaluator(node, cg);
 	}
 
+static TR::Register *
+vcmpHelper(TR::Node *node, TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, bool swapChildren)
+   {
+   TR::Node *firstChild = node->getFirstChild();
+   TR::Node *secondChild = node->getSecondChild();
+   TR::Register *lhsReg = NULL, *rhsReg = NULL;
+
+   lhsReg = cg->evaluate(firstChild);
+   rhsReg = cg->evaluate(secondChild);
+
+   TR_ASSERT(lhsReg->getKind() == TR_VRF, "unexpected Register kind\n");
+   TR_ASSERT(rhsReg->getKind() == TR_VRF, "unexpected Register kind\n");
+
+   TR::Register *resReg = cg->allocateRegister(TR_VRF);
+
+   node->setRegister(resReg);
+
+   if (swapChildren)
+      {
+      generateTrg1Src2Instruction(cg, op, node, resReg, rhsReg, lhsReg);
+      }
+   else
+      {
+      generateTrg1Src2Instruction(cg, op, node, resReg, lhsReg, rhsReg);
+      }
+
+   cg->decReferenceCount(firstChild);
+   cg->decReferenceCount(secondChild);
+   return resReg;
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::vcmpeqEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   TR::InstOpCode::Mnemonic cmpOp;
+   switch(node->getDataType())
+      {
+      case TR::VectorInt8:
+         cmpOp = TR::InstOpCode::vcmpeq16b;
+         break;
+      case TR::VectorInt16:
+         cmpOp = TR::InstOpCode::vcmpeq8h;
+         break;
+      case TR::VectorFloat:
+         cmpOp = TR::InstOpCode::vfcmpeq4s;
+         break;
+      case TR::VectorDouble:
+         cmpOp = TR::InstOpCode::vfcmpeq2d;
+         break;
+      default:
+         TR_ASSERT(false, "unrecognized vector type %s\n", node->getDataType().toString());
+         return NULL;
+      }
+   return vcmpHelper(node, cg, cmpOp, false);
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::vcmpgtEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   TR::InstOpCode::Mnemonic cmpOp;
+   switch(node->getDataType())
+      {
+      case TR::VectorInt8:
+         cmpOp = TR::InstOpCode::vcmpgt16b;
+         break;
+      case TR::VectorInt16:
+         cmpOp = TR::InstOpCode::vcmpgt8h;
+         break;
+      default:
+         TR_ASSERT(false, "unrecognized vector type %s\n", node->getDataType().toString());
+         return NULL;
+      }
+   return vcmpHelper(node, cg, cmpOp, false);
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::vcmpgeEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   TR::InstOpCode::Mnemonic cmpOp;
+   switch(node->getDataType())
+      {
+      case TR::VectorInt8:
+         cmpOp = TR::InstOpCode::vcmpge16b;
+         break;
+      case TR::VectorInt16:
+         cmpOp = TR::InstOpCode::vcmpge8h;
+         break;
+      default:
+         TR_ASSERT(false, "unrecognized vector type %s\n", node->getDataType().toString());
+         return NULL;
+      }
+   return vcmpHelper(node, cg, cmpOp, false);
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::vcmpltEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   TR::InstOpCode::Mnemonic cmpOp;
+   switch(node->getDataType())
+      {
+      case TR::VectorInt8:
+         cmpOp = TR::InstOpCode::vcmpgt16b;
+         break;
+      case TR::VectorInt16:
+         cmpOp = TR::InstOpCode::vcmpgt8h;
+         break;
+      default:
+         TR_ASSERT(false, "unrecognized vector type %s\n", node->getDataType().toString());
+         return NULL;
+      }
+   return vcmpHelper(node, cg, cmpOp, true);
+   }
+
+TR::Register *
+OMR::ARM64::TreeEvaluator::vcmpleEvaluator(TR::Node *node, TR::CodeGenerator *cg)
+   {
+   TR::InstOpCode::Mnemonic cmpOp;
+   switch(node->getDataType())
+      {
+      case TR::VectorInt8:
+         cmpOp = TR::InstOpCode::vcmpge16b;
+         break;
+      case TR::VectorInt16:
+         cmpOp = TR::InstOpCode::vcmpge8h;
+         break;
+      default:
+         TR_ASSERT(false, "unrecognized vector type %s\n", node->getDataType().toString());
+         return NULL;
+      }
+   return vcmpHelper(node, cg, cmpOp, true);
+   }
+
 TR::Register *
 OMR::ARM64::TreeEvaluator::lookupEvaluator(TR::Node *node, TR::CodeGenerator *cg)
    {

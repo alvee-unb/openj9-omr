@@ -730,6 +730,15 @@
 		vfneg4s,                                                  	/* 0x6EA0F800	FNEG      	 */
 		vfneg2d,                                                  	/* 0x6EE0F800	FNEG      	 */
 		vnot16b,                                                  	/* 0x6E205800	NOT      	 */
+	/* Vector Compare Instructions */
+		vcmpeq16b,                                              	/* 0x6E208C00	CMEQ      	 */
+		vcmpeq8h,                                               	/* 0x6E608C00	CMEQ      	 */
+		vfcmpeq4s,                                              	/* 0x4E20E400	FCMEQ      	 */
+		vfcmpeq2d,                                              	/* 0x4E60E400	FCMEQ      	 */
+		vcmpgt16b,                                              	/* 0x4E203400	CMGT      	 */
+		vcmpgt8h,                                               	/* 0x4E603400	CMGT      	 */
+		vcmpge16b,                                              	/* 0x4E203C00	CMGE      	 */
+		vcmpge8h,                                               	/* 0x4E603C00	CMGE      	 */
 /* Hint instructions */
 		nop,                                                    	/* 0xD503201F   NOP          */
 /* Internal OpCodes */

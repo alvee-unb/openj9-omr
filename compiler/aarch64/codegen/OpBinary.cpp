@@ -729,6 +729,15 @@ const OMR::ARM64::InstOpCode::OpCodeBinaryEntry OMR::ARM64::InstOpCode::binaryEn
 		0x6EA0F800,	/* FNEG      	vfneg4s	 */
 		0x6EE0F800,	/* FNEG      	vfneg2d	 */
 		0x6E205800,	/* NOT      	vnot16b	 */
+	/* Vector Compare Instructions */
+		0x6E208C00,	/* CMEQ      	vcmpeq16b	 */
+		0x6E608C00,	/* CMEQ      	vcmpeq8h	 */
+		0x4E20E400,	/* FCMEQ      	vfcmpeq4s	 */
+		0x4E60E400,	/* FCMEQ      	vfcmpeq2d	 */
+		0x4E203400,	/* CMGT      	vcmpgt16b	 */
+		0x4E603400,	/* CMGT      	vcmpgt8h	 */
+		0x4E203C00,	/* CMGE      	vcmpge16b	 */
+		0x4E603C00,	/* CMGE      	vcmpge8h	 */
 	/* Hint instructions */
 		0xD503201F,	/* NOP          nop      */
 };

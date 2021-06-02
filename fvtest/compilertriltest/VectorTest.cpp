@@ -847,3 +847,501 @@ TEST_F(VectorTest, VInt8Not) {
         EXPECT_EQ(~inputA[i], output[i]);
     }
 }
+
+TEST_F(VectorTest, VInt8CmpEq) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt8 offset=0                          "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpeq                                             "
+                     "                 (vloadi type=VectorInt8 (aload parm=1))        "
+                     "                 (vloadi type=VectorInt8 (aload parm=2))))      "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int8_t[],int8_t[],int8_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int8_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int8_t inputA[] =  {8, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 7};
+    int8_t inputB[] =  {7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 8};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPEQ TEST VectorInt8 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt16CmpEq) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt16 offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpeq                                             "
+                     "                 (vloadi type=VectorInt16 (aload parm=1))       "
+                     "                 (vloadi type=VectorInt16 (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int16_t[],int16_t[],int16_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int16_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t inputA[] =  {60, 45, 30, 0, -3, -2, -1, 1};
+    int16_t inputB[] =  {59, 45, 30, 0, -3, -2, -1, 2};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPEQ TEST VectorInt16 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+/*
+TEST_F(VectorTest, VFloatCmpEq) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorFloat offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpeq                                             "
+                     "                 (vloadi type=VectorFloat (aload parm=1))       "
+                     "                 (vloadi type=VectorFloat (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(float[],float[],float[])>();
+    // This test currently assumes 128bit SIMD
+
+    float output[] =  {0.0f, 0.0f, 0.0f, 0.0f};
+    float inputA[] =  {5.9f, 0.0f, -0.1f, 2.0f};
+    float inputB[] =  {6.0f, 0.0f, -0.1f, 1.9f};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPEQ TEST 4S output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+*/
+TEST_F(VectorTest, VDoubleCmpEq) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorDouble offset=0                        "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpeq                                            "
+                     "                 (vloadi type=VectorDouble (aload parm=1))      "
+                     "                 (vloadi type=VectorDouble (aload parm=2))))    "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(double[],double[],double[])>();
+    // This test currently assumes 128bit SIMD
+
+    double output[] =  {0.0, 0.0};
+    double inputA[] =  {1.0, -1.5};
+    double inputB[] =  {1.0, 1.5};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPEQ TEST 2D output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt8CmpGt) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt8 offset=0                          "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpgt                                             "
+                     "                 (vloadi type=VectorInt8 (aload parm=1))        "
+                     "                 (vloadi type=VectorInt8 (aload parm=2))))      "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int8_t[],int8_t[],int8_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int8_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int8_t inputA[] =  {8, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 7};
+    int8_t inputB[] =  {7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 8};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPGT TEST VectorInt8 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt16CmpGt) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt16 offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpgt                                             "
+                     "                 (vloadi type=VectorInt16 (aload parm=1))       "
+                     "                 (vloadi type=VectorInt16 (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int16_t[],int16_t[],int16_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int16_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t inputA[] =  {60, 45, 30, 0, -3, -2, -1, 1};
+    int16_t inputB[] =  {59, 45, 30, 0, -3, -2, -1, 2};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPGT TEST VectorInt16 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt8CmpGe) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt8 offset=0                          "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpge                                             "
+                     "                 (vloadi type=VectorInt8 (aload parm=1))        "
+                     "                 (vloadi type=VectorInt8 (aload parm=2))))      "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int8_t[],int8_t[],int8_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int8_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int8_t inputA[] =  {8, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 7};
+    int8_t inputB[] =  {7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 8};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPGE TEST VectorInt8 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt16CmpGe) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt16 offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmpge                                             "
+                     "                 (vloadi type=VectorInt16 (aload parm=1))       "
+                     "                 (vloadi type=VectorInt16 (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int16_t[],int16_t[],int16_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int16_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t inputA[] =  {60, 45, 30, 0, -3, -2, -1, 1};
+    int16_t inputB[] =  {59, 45, 30, 0, -3, -2, -1, 2};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPGE TEST VectorInt16 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt8CmpLt) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt8 offset=0                          "
+                     "         (aload parm=0)                                         "
+                     "            (vcmplt                                             "
+                     "                 (vloadi type=VectorInt8 (aload parm=1))        "
+                     "                 (vloadi type=VectorInt8 (aload parm=2))))      "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int8_t[],int8_t[],int8_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int8_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int8_t inputA[] =  {8, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 7};
+    int8_t inputB[] =  {7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 8};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPLT TEST VectorInt8 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt16CmpLt) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt16 offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmplt                                             "
+                     "                 (vloadi type=VectorInt16 (aload parm=1))       "
+                     "                 (vloadi type=VectorInt16 (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int16_t[],int16_t[],int16_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int16_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t inputA[] =  {60, 45, 30, 0, -3, -2, -1, 1};
+    int16_t inputB[] =  {59, 45, 30, 0, -3, -2, -1, 2};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPLT TEST VectorInt16 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt8CmpLe) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt8 offset=0                          "
+                     "         (aload parm=0)                                         "
+                     "            (vcmple                                             "
+                     "                 (vloadi type=VectorInt8 (aload parm=1))        "
+                     "                 (vloadi type=VectorInt8 (aload parm=2))))      "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int8_t[],int8_t[],int8_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int8_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int8_t inputA[] =  {8, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 7};
+    int8_t inputB[] =  {7, 6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6, -7, 8};
+
+    entry_point(output,inputA,inputB);
+    std::cout << "VCMPLE TEST VectorInt8 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
+
+TEST_F(VectorTest, VInt16CmpLe) {
+
+   auto inputTrees = "(method return= NoType args=[Address,Address,Address]           "
+                     "  (block                                                        "
+                     "     (vstorei type=VectorInt16 offset=0                         "
+                     "         (aload parm=0)                                         "
+                     "            (vcmple                                             "
+                     "                 (vloadi type=VectorInt16 (aload parm=1))       "
+                     "                 (vloadi type=VectorInt16 (aload parm=2))))     "
+                     "     (return)))                                                 ";
+
+    auto trees = parseString(inputTrees);
+
+    ASSERT_NOTNULL(trees);
+    //TODO: Re-enable this test on S390 after issue #1843 is resolved.
+    SKIP_ON_S390(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_S390X(KnownBug) << "This test is currently disabled on Z platforms because not all Z platforms have vector support (issue #1843)";
+    SKIP_ON_RISCV(MissingImplementation);
+    SKIP_ON_POWER(MissingImplementation);
+    SKIP_ON_X86(MissingImplementation);
+    SKIP_ON_HAMMER(MissingImplementation);
+
+    Tril::DefaultCompiler compiler(trees);
+    ASSERT_EQ(0, compiler.compile()) << "Compilation failed unexpectedly\n" << "Input trees: " << inputTrees;
+
+
+    auto entry_point = compiler.getEntryPoint<void (*)(int16_t[],int16_t[],int16_t[])>();
+    // This test currently assumes 128bit SIMD
+
+    int16_t output[] =  {0, 0, 0, 0, 0, 0, 0, 0};
+    int16_t inputA[] =  {60, 45, 30, 0, -3, -2, -1, 1};
+    int16_t inputB[] =  {59, 45, 30, 0, -3, -2, -1, 2};
+
+    entry_point(output,inputA,inputB);
+
+    std::cout << "VCMPLE TEST VectorInt16 output:\n";
+    for (int i = 0; i < (sizeof(output) / sizeof(*output)); i++) {
+        std::cout << output[i] << " ";//EXPECT_EQ(inputA[i] + inputB[i], output[i]);
+    }
+    std::cout << "\n";
+}
