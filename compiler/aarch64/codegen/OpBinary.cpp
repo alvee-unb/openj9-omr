@@ -736,6 +736,10 @@ const OMR::ARM64::InstOpCode::OpCodeBinaryEntry OMR::ARM64::InstOpCode::binaryEn
 		0x6EA0F800,	/* FNEG      	vfneg4s	 */
 		0x6EE0F800,	/* FNEG      	vfneg2d	 */
 		0x6E205800,	/* NOT      	vnot16b	 */
+		0x4E010C00,	/* DUP      	vdup16b  */
+		0x4E020C00,	/* DUP      	vdup8h   */
+		0x4E040400,	/* DUP      	vdup4s   */
+		0x4E080400,	/* DUP      	vdup2d   */
 	/* Hint instructions */
 		0xD503201F,	/* NOP          nop      */
 };

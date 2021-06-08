@@ -87,8 +87,10 @@ OMR::ARM64::CodeGenerator::initialize()
 
    cg->addSupportedLiveRegisterKind(TR_GPR);
    cg->addSupportedLiveRegisterKind(TR_FPR);
+   cg->addSupportedLiveRegisterKind(TR_VRF);
    cg->setLiveRegisters(new (cg->trHeapMemory()) TR_LiveRegisters(comp), TR_GPR);
    cg->setLiveRegisters(new (cg->trHeapMemory()) TR_LiveRegisters(comp), TR_FPR);
+   cg->setLiveRegisters(new (cg->trHeapMemory()) TR_LiveRegisters(comp), TR_VRF);
 
    cg->setSupportsVirtualGuardNOPing();
 
@@ -164,6 +166,8 @@ OMR::ARM64::CodeGenerator::initialize()
 
    if (comp->target().isSMP())
       cg->setEnforceStoreOrder();
+
+   cg->setSupportsAutoSIMD();
    }
 
 void
@@ -572,6 +576,31 @@ int64_t OMR::ARM64::CodeGenerator::getSmallestPosConstThatMustBeMaterialized()
    {
    TR_ASSERT(0, "Not Implemented on AArch64");
    return 0;
+   }
+
+bool OMR::ARM64::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode, TR::DataType dt)
+   {
+   // implemented vector opcodes
+   switch (opcode.getOpCodeValue())
+      {
+      case TR::vadd:
+      case TR::vsub:
+      case TR::vmul:
+      case TR::vdiv:
+      case TR::vload:
+      case TR::vloadi:
+      case TR::vstore:
+      case TR::vstorei:
+      case TR::vsplats:
+         if (dt == TR::Int8 || dt == TR::Int16 || dt == TR::Float || dt == TR::Double)
+            return true;
+         else
+            return false;
+      default:
+         return false;
+      }
+
+   return false;
    }
 
 bool
