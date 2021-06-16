@@ -1190,6 +1190,14 @@ OMR::ARM64::TreeEvaluator::vsplatsEvaluator(TR::Node *node, TR::CodeGenerator *c
          TR_ASSERT(srcReg->getKind() == TR_GPR, "unexpected Register kind\n");
          op = TR::InstOpCode::vdup8h;
          break;
+      case TR::VectorInt32:
+         TR_ASSERT(srcReg->getKind() == TR_GPR, "unexpected Register kind\n");
+         op = TR::InstOpCode::vgdup4s;
+         break;
+      case TR::VectorInt64:
+         TR_ASSERT(srcReg->getKind() == TR_GPR, "unexpected Register kind\n");
+         op = TR::InstOpCode::vgdup2d;
+         break;
       case TR::VectorFloat:
          TR_ASSERT(srcReg->getKind() == TR_FPR, "unexpected Register kind\n");
          op = TR::InstOpCode::vdup4s;

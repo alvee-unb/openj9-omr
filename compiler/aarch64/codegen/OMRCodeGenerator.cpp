@@ -585,14 +585,25 @@ bool OMR::ARM64::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode
       {
       case TR::vadd:
       case TR::vsub:
+         if (dt == TR::Int64)
+            return true;
+         /* other types -- fall through */
       case TR::vmul:
+         if (dt == TR::Int8 || dt == TR::Int16 || dt == TR::Int32)
+            return true;
+         else
+            return false;
       case TR::vdiv:
+         if (dt == TR::Float || dt == TR::Double)
+            return true;
+         else
+            return false;
       case TR::vload:
       case TR::vloadi:
       case TR::vstore:
       case TR::vstorei:
       case TR::vsplats:
-         if (dt == TR::Int8 || dt == TR::Int16 || dt == TR::Float || dt == TR::Double)
+         if (dt == TR::Int8 || dt == TR::Int16 || dt == TR::Int32 || dt == TR::Int64 || dt == TR::Float || dt == TR::Double)
             return true;
          else
             return false;
